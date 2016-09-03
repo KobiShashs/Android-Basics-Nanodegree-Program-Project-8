@@ -26,14 +26,13 @@ public class MainActivity extends AppCompatActivity {
         addHabit("Squash", "Sports", 2, 200);
         addHabit("Android", "Computers", 1, 300);
         addHabit("iOS", "Computers", 0, 23);
-        getAllHabits();
 
+        read();
 
         editHabit(230);//iOS
-        getAllHabits();
+        read();
 
-        deleteAll();
-        getAllHabits();
+        deleteDB();
     }
 
     public void addHabit(String name, String section, int frequency, int cost) {
@@ -54,9 +53,60 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void getAllHabits() {
+//    public void getAllHabits() {
+//        SQLiteDatabase db = mDbHelper.getReadableDatabase();
+//
+//        String[] projection = {
+//                HabitEntry._ID,
+//                HabitEntry.COLUMN_HABIT_NAME,
+//                HabitEntry.COLUMN_HABIT_SECTION,
+//                HabitEntry.COLUMN_HABIT_FREQUENCY,
+//                HabitEntry.COLUMN_HABIT_COST
+//        };
+//
+//        Cursor cursor = db.query(
+//                HabitEntry.TABLE_NAME,
+//                projection,
+//                null,
+//                null,
+//                null,
+//                null,
+//                null);
+//
+//        try {
+//
+//
+//            int idColumnIndex = cursor.getColumnIndex(HabitEntry._ID);
+//            int nameColumnIndex = cursor.getColumnIndex(HabitEntry.COLUMN_HABIT_NAME);
+//            int sectionColumnIndex = cursor.getColumnIndex(HabitEntry.COLUMN_HABIT_SECTION);
+//            int frequencyColumnIndex = cursor.getColumnIndex(HabitEntry.COLUMN_HABIT_FREQUENCY);
+//            int costColumnIndex = cursor.getColumnIndex(HabitEntry.COLUMN_HABIT_COST);
+//
+//            while (cursor.moveToNext()) {
+//                int currentID = cursor.getInt(idColumnIndex);
+//                String currentName = cursor.getString(nameColumnIndex);
+//                String currentSection = cursor.getString(sectionColumnIndex);
+//                int currentFrequency = cursor.getInt(frequencyColumnIndex);
+//                int currentCost = cursor.getInt(costColumnIndex);
+//
+//                String res = "*************************************************************" + "\n\n" +
+//                        "ID       : " + String.valueOf(currentID) + "\n\n" +
+//                        "Name     : " + currentName + "\n\n" +
+//                        "Section  : " + currentSection + "\n\n" +
+//                        "Frequency: " + getFrequencyValue(currentFrequency) + "\n\n" +
+//                        "Cost     : " + String.valueOf(currentCost) + "\n\n" +
+//                        "*************************************************************" + "\n\n";
+//                Log.w(TAG, res);
+//            }
+//        } catch (SQLiteException e) {
+//            Log.w(TAG, e.fillInStackTrace());
+//        } finally {
+//            cursor.close();
+//        }
+//
+//    }
+    public Cursor read(){
         SQLiteDatabase db = mDbHelper.getReadableDatabase();
-
         String[] projection = {
                 HabitEntry._ID,
                 HabitEntry.COLUMN_HABIT_NAME,
@@ -74,37 +124,7 @@ public class MainActivity extends AppCompatActivity {
                 null,
                 null);
 
-        try {
-
-
-            int idColumnIndex = cursor.getColumnIndex(HabitEntry._ID);
-            int nameColumnIndex = cursor.getColumnIndex(HabitEntry.COLUMN_HABIT_NAME);
-            int sectionColumnIndex = cursor.getColumnIndex(HabitEntry.COLUMN_HABIT_SECTION);
-            int frequencyColumnIndex = cursor.getColumnIndex(HabitEntry.COLUMN_HABIT_FREQUENCY);
-            int costColumnIndex = cursor.getColumnIndex(HabitEntry.COLUMN_HABIT_COST);
-
-            while (cursor.moveToNext()) {
-                int currentID = cursor.getInt(idColumnIndex);
-                String currentName = cursor.getString(nameColumnIndex);
-                String currentSection = cursor.getString(sectionColumnIndex);
-                int currentFrequency = cursor.getInt(frequencyColumnIndex);
-                int currentCost = cursor.getInt(costColumnIndex);
-
-                String res = "*************************************************************" + "\n\n" +
-                        "ID       : " + String.valueOf(currentID) + "\n\n" +
-                        "Name     : " + currentName + "\n\n" +
-                        "Section  : " + currentSection + "\n\n" +
-                        "Frequency: " + getFrequencyValue(currentFrequency) + "\n\n" +
-                        "Cost     : " + String.valueOf(currentCost) + "\n\n" +
-                        "*************************************************************" + "\n\n";
-                Log.w(TAG, res);
-            }
-        } catch (SQLiteException e) {
-            Log.w(TAG, e.fillInStackTrace());
-        } finally {
-            cursor.close();
-        }
-
+        return cursor;
     }
 
     public String getFrequencyValue(int value) {
@@ -125,15 +145,8 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void deleteAll() {
-        SQLiteDatabase db = mDbHelper.getWritableDatabase();
-        long newRowId = db.delete(HabitEntry.TABLE_NAME, null, null);
-        if (newRowId == -1) {
-            Log.w(TAG, "Error with deleting all habits");
-        } else {
-            // Otherwise, the insertion was successful and we can display a toast with the row ID.
-            Log.w(TAG, "Deletion succeed" + newRowId);
-        }
+    public void deleteDB() {
+        mDbHelper.deleteDatabase(this);
 
     }
 
